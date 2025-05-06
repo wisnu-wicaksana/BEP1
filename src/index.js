@@ -22,8 +22,8 @@ const tableController = require("./table/table.controller")
 
 
 app.use("/product", productsController) 
-
 app.use("/table", tableController)
+
 
 
 app.listen(PORT, () => {
