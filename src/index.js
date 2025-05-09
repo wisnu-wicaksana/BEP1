@@ -19,10 +19,11 @@ app.get("/api", (req, res) => {
 
 const productsController = require("./product/product.controller")
 const tableController = require("./table/table.controller")
-
+const orderRoutes = require('./order/order.route');
 
 app.use("/product", productsController) 
 app.use("/table", tableController)
+app.use("/order", orderRoutes) 
 
 
 

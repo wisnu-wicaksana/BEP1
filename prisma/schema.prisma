@@ -3,48 +3,52 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgresql" // atau mysql/sqlite, sesuaikan
   url      = env("DATABASE_URL")
 }
 
-model Product {
-  id          Int          @id @default(autoincrement())
-  name        String
-  price       Float
-  description String
-  image       String
+model product {
+  id          Int        @id @default(autoincrement()) @map("id")
+  name        String     @map("name")
+  price       Float      @map("price")
+  description String     @map("description")
+  image       String     @map("image")
 
-  orderItems  OrderItem[]  // Relasi ke OrderItem
+  orderItems  orderItem[]
+
+  @@map("product")
 }
 
-model Table {
-  id     Int     @id @default(autoincrement())
-  number Int     @unique
-  qrCode String?
+model table {
+  id      Int     @id @default(autoincrement()) @map("id")
+  number  Int     @unique @map("number")
+  qrCode  String? @map("qr_code")
 
-  orders Order[]            // ← Relasi ke Order
+  orders  order[]
 
-  @@map("Table") // Sesuaikan dengan nama tabel di DB
+  @@map("table")
 }
 
-model Order {
-  id         Int         @id @default(autoincrement())
-  createdAt  DateTime    @default(now())
-  status     String      @default("pending") // pending | paid | cancelled
-  table      Table       @relation(fields: [tableId], references: [id])
-  tableId    Int
+model order {
+  id         Int         @id @default(autoincrement()) @map("id")
+  createdAt  DateTime    @default(now()) @map("created_at")
+  status     String      @default("pending") @map("status")
+  tableId    Int         @map("table_id")
+  table      table       @relation(fields: [tableId], references: [id])
 
-  orderItems OrderItem[] // Relasi ke item dalam pesanan
+  orderItems orderItem[]
+
+  @@map("order")
 }
 
-model OrderItem {
-  id        Int     @id @default(autoincrement())
-  order     Order   @relation(fields: [orderId], references: [id])
-  orderId   Int
+model orderItem {
+  id        Int     @id @default(autoincrement()) @map("id")
+  orderId   Int     @map("order_id")
+  productId Int     @map("product_id")
+  quantity  Int     @map("quantity")
 
-  product   Product @relation(fields: [productId], references: [id])
-  productId Int
+  order     order   @relation(fields: [orderId], references: [id])
+  product   product @relation(fields: [productId], references: [id])
 
-  quantity  Int
+  @@map("order_item")
 }
-
